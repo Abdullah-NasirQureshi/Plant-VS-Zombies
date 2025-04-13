@@ -1,0 +1,65 @@
+#include "PeaShooter.h"
+
+int PeaShooter::fireRate = 2;
+
+PeaShooter::PeaShooter(int x, int y, int aLane) {
+	this->Type = 2;
+	this->lane = aLane;
+	this->bullet = nullptr;
+	this->X_coordinate = x;
+	this->Y_coordinate = y;
+	this->Exist = 1;
+	this->Health = 3;
+
+	Plant_texture.loadFromFile("E:\\Uni Content\\Semester_02\\OOP\\OOP_Pro\\Images\\PeaShooter.png");
+	Plant_sprite.setTexture(Plant_texture);
+	Plant_sprite.setScale(0.1f, 0.1f);
+	this->fireTime.restart();
+}
+
+//Bullet PeaShooter::getBullet() const {
+//	return *this->bullet;
+//}
+
+int PeaShooter::getBulletX(int x)
+{
+	if (bullet == nullptr)
+	{
+		return -100;
+	}
+	return bullet->getX();
+}
+
+void PeaShooter::setBulletExist(int x, bool s)
+{
+	if(bullet!=nullptr)
+	bullet->setExist(s);
+}
+void PeaShooter::Update(sf::RenderWindow& window) {
+	if (!this->Exist) {
+		return;
+	}
+	
+	if (this->bullet == nullptr) {
+		if (fireTime.getElapsedTime().asMilliseconds() < 2000) {
+			return;
+		}
+		fireTime.restart();
+
+		this->bullet = new Bullet(this->X_coordinate + 50, this->Y_coordinate+10, this->lane, 0);
+	}
+	else {
+		this->shootBullet(window);
+	}
+}
+
+void PeaShooter::shootBullet(sf::RenderWindow& window) {
+	if (!this->bullet->getExists()) {
+		delete this->bullet;
+		this->bullet = nullptr;
+		
+		return;
+	}
+	this->bullet->moveBullet();
+	this->bullet->DrawBullet(window);
+}
